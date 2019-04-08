@@ -185,5 +185,61 @@ public class DBcon {
         return result;
     }
     
+    public Boolean updateObat(Obat obat){
+        String sql = "UPDATE obat SET nama = ? , "
+                + "min_stock = ? , "
+                + "harga = ? , "
+                + "satuan = ?  "
+                + "WHERE id = ?";
+        Boolean result = true;
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // set the corresponding param
+            pstmt.setString(1, obat.getNama());
+            pstmt.setInt(3, obat.getHarga());
+            pstmt.setInt(2, obat.getMin_stock());
+            pstmt.setString(4, obat.getSatuan());
+            pstmt.setInt(5, obat.getID());
+            // execute the delete statement
+            pstmt.executeUpdate();
+ 
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            result = false;
+        }
+        return result;
+    }
+    
+    public List<Obat> getDataCari(String parm){
+        List<Obat> dataObat = new ArrayList<Obat>();
+        String sql = "SELECT id, kode, nama, min_stock, stock, harga, satuan \n"
+                +"FROM obat WHERE hapus = 0 AND \n"
+                +"(LOWER(kode) LIKE ? OR LOWER(nama) LIKE ? OR stock = ? OR harga = ?) ";
+        
+        try (PreparedStatement pstmt  = conn.prepareStatement(sql)){
+            
+            pstmt.setString(1, "%"+parm+"%");
+            pstmt.setString(2, "%"+parm+"%");
+            pstmt.setString(3, parm);
+            pstmt.setString(4, parm);
+            ResultSet rs    = pstmt.executeQuery();
+            // loop through the result set
+            while (rs.next()) {
+                Obat obat = new Obat();
+                obat.setID(rs.getInt("id"));
+                obat.setNama(rs.getString("nama"));
+                obat.setKode(rs.getString("kode"));
+                obat.setMin_stock(rs.getInt("min_stock"));
+                obat.setStock(rs.getInt("stock"));
+                obat.setHarga(rs.getInt("harga"));
+                obat.setSatuan(rs.getString("satuan"));
+                dataObat.add(obat);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error search : "+e.getMessage());
+        }
+        return dataObat;
+    }
+    
+    
     
 }

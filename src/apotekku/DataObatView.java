@@ -7,6 +7,7 @@ package apotekku;
 import apotekku.model.Obat;
 import apotekku.model.ObatTableModel;
 import apotekku.util.DBcon;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -35,6 +36,7 @@ public class DataObatView extends javax.swing.JFrame {
     List<Obat> dataObat = new ArrayList<>();
     DBcon con = new DBcon();
     ObatTableModel tabelmodel;
+    Obat obatEdit = new Obat();
 
     /**
      * Creates new form formmenu
@@ -109,6 +111,21 @@ public class DataObatView extends javax.swing.JFrame {
         jComboBox1 = new javax.swing.JComboBox<>();
         jButton3 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        dialogEdit = new javax.swing.JDialog();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
+        txtKode1 = new javax.swing.JTextField();
+        txtNama1 = new javax.swing.JTextField();
+        txtMinStock1 = new javax.swing.JTextField();
+        txtHarga1 = new javax.swing.JTextField();
+        jComboBox2 = new javax.swing.JComboBox<>();
+        jButton4 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -117,7 +134,7 @@ public class DataObatView extends javax.swing.JFrame {
         btnEdit = new javax.swing.JButton();
         btnHapus = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtCari = new javax.swing.JTextField();
         jDesktopPane1 = new javax.swing.JDesktopPane();
         jLabel1 = new javax.swing.JLabel();
         tgl = new javax.swing.JLabel();
@@ -277,6 +294,135 @@ public class DataObatView extends javax.swing.JFrame {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
+        dialogEdit.setTitle("Edit Obat");
+        dialogEdit.setMinimumSize(new java.awt.Dimension(225, 320));
+        dialogEdit.setModalExclusionType(java.awt.Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
+        dialogEdit.setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
+        dialogEdit.setName("Tambah Obat"); // NOI18N
+        dialogEdit.setResizable(false);
+
+        jLabel11.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel11.setText("Edit Obat");
+
+        jLabel12.setText("Kode");
+
+        jLabel13.setText("Nama");
+
+        jLabel14.setText("Min Stock");
+
+        jLabel15.setText("Harga");
+
+        jLabel16.setText("Satuan");
+
+        txtKode1.setEditable(false);
+
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "PCS", "TABLET", "KAPSUL", "KAPLET" }));
+
+        jButton4.setText("SIMPAN");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        jButton6.setText("TUTUP");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtNama1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel14)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtMinStock1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(44, 44, 44)
+                        .addComponent(txtHarga1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel16)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel11, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                            .addComponent(jLabel12)
+                            .addGap(49, 49, 49)
+                            .addComponent(txtKode1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addContainerGap()))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(64, 64, 64)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(txtNama1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(txtMinStock1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel14))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtHarga1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel15))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(jLabel16)
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton6)
+                .addContainerGap(27, Short.MAX_VALUE))
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jLabel11)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                        .addComponent(txtKode1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel12))
+                    .addContainerGap(193, Short.MAX_VALUE)))
+        );
+
+        javax.swing.GroupLayout dialogEditLayout = new javax.swing.GroupLayout(dialogEdit.getContentPane());
+        dialogEdit.getContentPane().setLayout(dialogEditLayout);
+        dialogEditLayout.setHorizontalGroup(
+            dialogEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dialogEditLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        dialogEditLayout.setVerticalGroup(
+            dialogEditLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dialogEditLayout.createSequentialGroup()
+                .addGap(0, 3, Short.MAX_VALUE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Sistem Informasi Apotek");
         setExtendedState(6);
@@ -306,6 +452,11 @@ public class DataObatView extends javax.swing.JFrame {
             }
         });
         tableObat.setFillsViewportHeight(true);
+        tableObat.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tableObatMousePressed(evt);
+            }
+        });
         jScrollPane2.setViewportView(tableObat);
         tableObat.getAccessibleContext().setAccessibleName("");
 
@@ -332,9 +483,14 @@ public class DataObatView extends javax.swing.JFrame {
 
         jLabel5.setText("Cari :");
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        txtCari.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                txtCariActionPerformed(evt);
+            }
+        });
+        txtCari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCariKeyReleased(evt);
             }
         });
 
@@ -355,7 +511,7 @@ public class DataObatView extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -371,7 +527,7 @@ public class DataObatView extends javax.swing.JFrame {
                     .addComponent(btnEdit)
                     .addComponent(btnHapus)
                     .addComponent(jLabel5)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 3, 20)); // NOI18N
@@ -694,9 +850,9 @@ public class DataObatView extends javax.swing.JFrame {
         new formlaptin().setVisible(true);        // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void txtCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCariActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_txtCariActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
         // TODO add your handling code here:
@@ -716,10 +872,24 @@ public class DataObatView extends javax.swing.JFrame {
         if (index < 0) {
             JOptionPane.showMessageDialog(null, "Pilih data yang ingin anda edit", "Peringatan", JOptionPane.INFORMATION_MESSAGE);
         } else {
-//            tabelmodel.deleteObat(index);
+            showDialogEdit(index);
         }
     }//GEN-LAST:event_btnEditActionPerformed
 
+    private void showDialogEdit(int index) {
+        obatEdit = tabelmodel.getObat(index);
+//            System.out.println("ini");
+//            System.out.println("Data obat"+obatEdit.getNama());
+        txtNama1.setText(obatEdit.getNama());
+        txtKode1.setText(obatEdit.getKode());
+        txtMinStock1.setText("" + obatEdit.getMin_stock());
+        txtHarga1.setText("" + obatEdit.getHarga());
+        jComboBox2.setSelectedItem("" + obatEdit.getSatuan());
+//            this.dialogEdit.revalidate();
+//            this.dialogEdit.repaint();
+        dialogEdit.setLocationRelativeTo(null);
+        dialogEdit.setVisible(true);
+    }
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         // TODO add your handling code here:
         dialogTambah.setLocationRelativeTo(null);
@@ -751,6 +921,7 @@ public class DataObatView extends javax.swing.JFrame {
                 try {
                     obat.setMin_stock(Integer.parseInt(min_stock));
                     obat.setHarga(Integer.parseInt(harga));
+                    obat.setSatuan(jComboBox1.getSelectedItem().toString());
                     if (con.insertObat(obat)) {
                         txtKode.setText("");
                         txtNama.setText("");
@@ -764,12 +935,74 @@ public class DataObatView extends javax.swing.JFrame {
                 } catch (NumberFormatException e) {
                     JOptionPane.showMessageDialog(dialogTambah, "Format yang anda masukan salah", "Peringatan", JOptionPane.INFORMATION_MESSAGE);
                 }
-            }else{
+            } else {
                 JOptionPane.showMessageDialog(dialogTambah, "Kode obat tidak boleh sama dengan obat lain", "Peringatan", JOptionPane.INFORMATION_MESSAGE);
             }
 
         }
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        String kode = txtKode1.getText();
+        String nama = txtNama1.getText();
+        String min_stock = txtMinStock1.getText();
+        String harga = txtHarga1.getText();
+        if (kode.isEmpty()
+                || nama.isEmpty()
+                || min_stock.isEmpty()
+                || harga.isEmpty()) {
+            JOptionPane.showMessageDialog(dialogEdit, "Data tidak boleh kosong", "Peringatan", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            obatEdit.setNama(nama);
+            try {
+                obatEdit.setMin_stock(Integer.parseInt(min_stock));
+                obatEdit.setHarga(Integer.parseInt(harga));
+                obatEdit.setSatuan(jComboBox2.getSelectedItem().toString());
+                if (con.updateObat(obatEdit)) {
+                    txtKode.setText("");
+                    txtNama.setText("");
+                    txtMinStock.setText("0");
+                    txtHarga.setText("0");
+                    dialogEdit.setVisible(false);
+                    setTableObat();
+                } else {
+                    JOptionPane.showMessageDialog(dialogEdit, "Format yang anda masukan salah", "Peringatan", JOptionPane.INFORMATION_MESSAGE);
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(dialogEdit, "Format yang anda masukan salah", "Peringatan", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        // TODO add your handling code here:
+        dialogEdit.setVisible(false);
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void txtCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCariKeyReleased
+        // TODO add your handling code here:
+        String cari = txtCari.getText().toLowerCase();
+        System.out.println("Search test : " + cari);
+        if (!cari.isEmpty()) {
+            dataObat = con.getDataCari(cari);
+            tabelmodel = new ObatTableModel(dataObat);
+            tableObat.setModel(tabelmodel);
+        } else {
+            setTableObat();
+        }
+    }//GEN-LAST:event_txtCariKeyReleased
+
+    private void tableObatMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableObatMousePressed
+        // TODO add your handling code here:
+//JTable table =(JTable) mouseEvent.getSource();
+        Point point = evt.getPoint();
+        int row = tableObat.rowAtPoint(point);
+        if (evt.getClickCount() == 2 && tableObat.getSelectedRow() != -1) {
+            System.out.println("doble clik");
+            showDialogEdit(tableObat.getSelectedRow());
+        }
+    }//GEN-LAST:event_tableObatMousePressed
 
     /**
      * @param args the command line arguments
@@ -819,15 +1052,25 @@ public class DataObatView extends javax.swing.JFrame {
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnTambah;
+    private javax.swing.JDialog dialogEdit;
     private javax.swing.JDialog dialogTambah;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -861,16 +1104,21 @@ public class DataObatView extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPopupMenu.Separator jSeparator1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JLabel lblwktu;
     private javax.swing.JTable tableObat;
     private javax.swing.JLabel tgl;
+    private javax.swing.JTextField txtCari;
     private javax.swing.JTextField txtHarga;
+    private javax.swing.JTextField txtHarga1;
     private javax.swing.JTextField txtKode;
+    private javax.swing.JTextField txtKode1;
     private javax.swing.JTextField txtMinStock;
+    private javax.swing.JTextField txtMinStock1;
     private javax.swing.JTextField txtNama;
+    private javax.swing.JTextField txtNama1;
     // End of variables declaration//GEN-END:variables
 
 }
