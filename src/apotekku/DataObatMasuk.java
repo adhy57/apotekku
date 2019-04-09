@@ -5,7 +5,8 @@
 package apotekku;
 
 import apotekku.model.Obat;
-import apotekku.model.ObatTableModel;
+import apotekku.model.ObatMasuk;
+import apotekku.model.ObatMasukTableModel;
 import apotekku.util.DBcon;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -25,7 +26,7 @@ import javax.swing.Timer;
  *
  * @author user
  */
-public class DataObatView extends javax.swing.JFrame {
+public class DataObatMasuk extends javax.swing.JFrame {
 
     java.util.Date tglsekarang = new java.util.Date();
     private SimpleDateFormat smpdtfmt = new SimpleDateFormat("dd MMMMMMMMM yyyy", Locale.getDefault());
@@ -33,15 +34,15 @@ public class DataObatView extends javax.swing.JFrame {
     private String tanggal = smpdtfmt.format(tglsekarang);
     private Connection Con;
     private Statement stm;
-    List<Obat> dataObat = new ArrayList<>();
+    List<ObatMasuk> dataObat = new ArrayList<>();
     DBcon con = new DBcon();
-    ObatTableModel tabelmodel;
+    ObatMasukTableModel tabelmodel;
     Obat obatEdit = new Obat();
 
     /**
      * Creates new form formmenu
      */
-    public DataObatView() {
+    public DataObatMasuk() {
         initComponents();
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         tgl.setText(tanggal);
@@ -50,8 +51,8 @@ public class DataObatView extends javax.swing.JFrame {
     }
 
     private void setTableObat() {
-        dataObat = con.getDataObat();
-        tabelmodel = new ObatTableModel(dataObat);
+        dataObat = con.getDataObatMasuk();
+        tabelmodel = new ObatMasukTableModel(dataObat);
         tableObat.setModel(tabelmodel);
     }
 
@@ -430,7 +431,7 @@ public class DataObatView extends javax.swing.JFrame {
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("DATA OBAT");
+        jLabel3.setText("DATA OBAT MASUK");
 
         tableObat.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -440,11 +441,11 @@ public class DataObatView extends javax.swing.JFrame {
                 {null, null, null, null, null}
             },
             new String [] {
-                "Nama", "Kode", "Harga", "Stock", "Min Stock"
+                "Tanggal", "Nama", "Kode", "Jumlah", "Diinput Oleh"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -986,15 +987,15 @@ public class DataObatView extends javax.swing.JFrame {
 
     private void txtCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCariKeyReleased
         // TODO add your handling code here:
-        String cari = txtCari.getText().toLowerCase();
-        System.out.println("Search test : " + cari);
-        if (!cari.isEmpty()) {
-            dataObat = con.getDataCari(cari);
-            tabelmodel = new ObatTableModel(dataObat);
-            tableObat.setModel(tabelmodel);
-        } else {
-            setTableObat();
-        }
+//        String cari = txtCari.getText().toLowerCase();
+//        System.out.println("Search test : " + cari);
+//        if (!cari.isEmpty()) {
+//            dataObat = con.getDataCari(cari);
+//            tabelmodel = new ObatMasukTableModel(dataObat);
+//            tableObat.setModel(tabelmodel);
+//        } else {
+//            setTableObat();
+//        }
     }//GEN-LAST:event_txtCariKeyReleased
 
     private void tableObatMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableObatMousePressed
@@ -1042,14 +1043,18 @@ public class DataObatView extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DataObatView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DataObatMasuk.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DataObatView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DataObatMasuk.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DataObatView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DataObatMasuk.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(DataObatView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DataObatMasuk.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -1061,7 +1066,7 @@ public class DataObatView extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                new DataObatView().setVisible(true);
+                new DataObatMasuk().setVisible(true);
             }
         });
     }

@@ -92,7 +92,7 @@ public class user extends javax.swing.JFrame {
 
         jLabel5.setText("Password");
 
-        btcari.setIcon(new javax.swing.ImageIcon(getClass().getResource("/apotekku/Find.png"))); // NOI18N
+        btcari.setIcon(new javax.swing.ImageIcon(getClass().getResource("/apotekku/images/Find.png"))); // NOI18N
         btcari.setToolTipText("Cari user");
         btcari.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -146,7 +146,7 @@ public class user extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        btbaru.setIcon(new javax.swing.ImageIcon(getClass().getResource("/apotekku/Create.png"))); // NOI18N
+        btbaru.setIcon(new javax.swing.ImageIcon(getClass().getResource("/apotekku/images/Create.png"))); // NOI18N
         btbaru.setToolTipText("Buat user baru");
         btbaru.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -154,7 +154,7 @@ public class user extends javax.swing.JFrame {
             }
         });
 
-        btbatal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/apotekku/Refresh.png"))); // NOI18N
+        btbatal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/apotekku/images/Refresh.png"))); // NOI18N
         btbatal.setToolTipText("Batal");
         btbatal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -162,7 +162,7 @@ public class user extends javax.swing.JFrame {
             }
         });
 
-        btubah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/apotekku/Modify.png"))); // NOI18N
+        btubah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/apotekku/images/Modify.png"))); // NOI18N
         btubah.setToolTipText("Edit / Update data user");
         btubah.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -170,7 +170,7 @@ public class user extends javax.swing.JFrame {
             }
         });
 
-        btsimpan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/apotekku/document_save.png"))); // NOI18N
+        btsimpan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/apotekku/images/document_save.png"))); // NOI18N
         btsimpan.setToolTipText("Simpan");
         btsimpan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -178,7 +178,7 @@ public class user extends javax.swing.JFrame {
             }
         });
 
-        btkeluar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/apotekku/Forward.png"))); // NOI18N
+        btkeluar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/apotekku/images/Forward.png"))); // NOI18N
         btkeluar.setToolTipText("Keluar");
         btkeluar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
