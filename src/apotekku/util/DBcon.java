@@ -7,6 +7,7 @@ package apotekku.util;
 
 import apotekku.model.Obat;
 import apotekku.model.ObatMasuk;
+import apotekku.model.Order;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -64,20 +65,41 @@ public class DBcon {
                 + "hapus	INTEGER DEFAULT 0,\n"
                 + "harga	INTEGER,\n"
                 + "satuan TEXT\n"
+                + "harga_beli INTEGER\n"
                 + ");";
         String sql_table_obat_masuk = "CREATE TABLE IF NOT EXISTS obat_masuk (\n"
                 + "id	INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, \n"
                 + "id_obat	INTEGER NOT NULL, \n"
-                + "tanggal	TEXT NOT NULL,"
+                + "tanggal	TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,"
                 + "jumlah	INTEGER NOT NULL,"
-                + "create_by	INTEGER NOT NULL,"
+                + "create_by	INTEGER NOT NULL DEFAULT 1,"
                 + "ket	TEXT"
+                + ");";
+        String sql_table_order = "CREATE TABLE IF NOT EXISTS tbl_order ("
+                + "id	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
+                + "invoice	TEXT,"
+                + "tanggal	TEXT,"
+                + "jumlah_barang	INTEGER,"
+                + "total_harga_beli	INTEGER,"
+                + "total_harga_jual	INTEGER,"
+                + "total_bayar	INTEGER"
+                + ");";
+        String sql_table_order_detail = "CREATE TABLE IF NOT EXISTS tbl_order_detail ("
+                + "id	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
+                + "id_order	INTEGER,"
+                + "id_obat	INTEGER,"
+                + "harga_beli	INTEGER,"
+                + "harga_jual	INTEGER,"
+                + "jumlah INTEGER,"
+                + "total	INTEGER"
                 + ");";
         try (Statement stmt = conn.createStatement()) {
             stmt.execute(sql_table_user);
             stmt.execute(sql_insert_admin);
             stmt.execute(sql_table_obat);
             stmt.execute(sql_table_obat_masuk);
+            stmt.execute(sql_table_order);
+            stmt.execute(sql_table_order_detail);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -140,7 +162,7 @@ public class DBcon {
      * @return
      */
     public Boolean deleteObat(int id) {
-        String sql = "DELETE FROM obat WHERE id = ?";
+        String sql = "UPDATE obat SET hapus = 1 WHERE id = ?";
         Boolean result = true;
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             // set the corresponding param
@@ -224,6 +246,7 @@ public class DBcon {
     }
 
     public List<Obat> getDataCari(String parm) {
+        parm = parm.toLowerCase();
         List<Obat> dataObat = new ArrayList<Obat>();
         String sql = "SELECT id, kode, nama, min_stock, stock, harga, satuan \n"
                 + "FROM obat WHERE hapus = 0 AND \n"
@@ -253,12 +276,12 @@ public class DBcon {
         }
         return dataObat;
     }
-    
+
     public List<ObatMasuk> getDataObatMasuk() {
         List<ObatMasuk> dataObat = new ArrayList<ObatMasuk>();
         String sql = "SELECT obat_masuk.id, obat.kode, obat.nama, obat_masuk.tanggal, obat_masuk.ket, \n"
-                +"obat_masuk.create_by, obat_masuk.jumlah \n"
-                +"FROM obat_masuk LEFT JOIN obat ON obat_masuk.id_obat = obat.id";
+                + "obat_masuk.create_by, obat_masuk.jumlah \n"
+                + "FROM obat_masuk LEFT JOIN obat ON obat_masuk.id_obat = obat.id";
 
         try (Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
@@ -281,6 +304,149 @@ public class DBcon {
         }
         return dataObat;
     }
+
+    public Boolean insertObatMasuk(ObatMasuk obat) {
+        String sql = "INSERT INTO obat_masuk (id_obat, jumlah, ket) \n"
+                + "VALUES(?,?,?)";
+        String sql_obat = "UPDATE obat SET stock = (SELECT stock FROM obat WHERE id = ?)+? WHERE id = ?";
+        Boolean result = true;
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+                PreparedStatement stmt = conn.prepareStatement(sql_obat)) {
+            // set the corresponding param
+            pstmt.setInt(1, obat.getID());
+            pstmt.setInt(2, obat.getJumlah());
+            pstmt.setString(3, obat.getKet());
+
+            stmt.setInt(1, obat.getID());
+            stmt.setInt(3, obat.getID());
+            stmt.setInt(2, obat.getJumlah());
+
+            // execute the delete statement
+            pstmt.executeUpdate();
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            result = false;
+        }
+        return result;
+    }
+
+    public Boolean deleteObatMasuk(int id, String kode) {
+        String sql = "UPDATE obat SET stock = ("
+                + "(SELECT stock FROM obat WHERE kode = ?)-(SELECT jumlah FROM obat_masuk WHERE id = ?)) "
+                + "WHERE kode = ?";
+        String sql_delete = "DELETE FROM obat_masuk WHERE id = ?";
+        Boolean result = true;
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+                PreparedStatement stmt = conn.prepareStatement(sql_delete);) {
+            // set the corresponding param
+            pstmt.setString(1, kode);
+            pstmt.setInt(2, id);
+            pstmt.setString(3, kode);
+
+            stmt.setInt(1, id);
+
+            // execute the delete statement
+            pstmt.executeUpdate();
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            result = false;
+        }
+        return result;
+    }
+
+    public Boolean updateObatMasuk(ObatMasuk obat, int jumlahLama) {
+        String sql = "UPDATE obat_masuk SET jumlah = ? , "
+                + "ket = ? "
+                + "WHERE id = ?";
+        String sql_stock = "UPDATE obat SET stock = (SELECT stock FROM obat WHERE kode = ?)+? "
+                + "WHERE kode = ?";
+        Boolean result = true;
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+                PreparedStatement stmt = conn.prepareStatement(sql_stock)) {
+            // set the corresponding param
+            pstmt.setInt(1, obat.getJumlah());
+            pstmt.setString(2, obat.getKet());
+            pstmt.setInt(3, obat.getID());
+            stmt.setString(1, obat.getKode());
+            stmt.setInt(2, obat.getJumlah() - jumlahLama);
+            stmt.setString(3, obat.getKode());
+
+            // execute the delete statement
+            pstmt.executeUpdate();
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            result = false;
+        }
+        return result;
+    }
+
+    public List<ObatMasuk> getDataMasukCari(String parm) {
+        parm = parm.toLowerCase();
+        List<ObatMasuk> dataObat = new ArrayList<ObatMasuk>();
+        String sql = "SELECT obat_masuk.id, obat.kode, obat.nama, obat_masuk.tanggal, obat_masuk.ket, \n"
+                + "obat_masuk.create_by, obat_masuk.jumlah \n"
+                + "FROM obat_masuk LEFT JOIN obat ON obat_masuk.id_obat = obat.id  \n"
+                + "WHERE LOWER(obat.kode) LIKE ? OR LOWER(obat.nama) LIKE ? OR obat_masuk.tanggal LIKE ? OR LOWER(obat_masuk.ket) LIKE ? OR obat_masuk.jumlah = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);) {
+
+            pstmt.setString(1, "%" + parm + "%");
+            pstmt.setString(2, "%" + parm + "%");
+            pstmt.setString(3, "%" + parm + "%");
+            pstmt.setString(4, "%" + parm + "%");
+            pstmt.setString(5, parm);
+            ResultSet rs = pstmt.executeQuery();
+
+            // loop through the result set
+            while (rs.next()) {
+//                System.out.println(rs.getInt("id") +  "\t" + 
+//                                   rs.getString("nama") + "\t");
+                ObatMasuk obat = new ObatMasuk();
+                obat.setID(rs.getInt("id"));
+                obat.setNama(rs.getString("nama"));
+                obat.setKode(rs.getString("kode"));
+                obat.setTanggal(rs.getString("tanggal"));
+                obat.setKet(rs.getString("ket"));
+                obat.setJumlah(rs.getInt("jumlah"));
+                dataObat.add(obat);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return dataObat;
+    }
     
+    public List<Order> getDataOrder() {
+        List<Order> dataOrder = new ArrayList<Order>();
+        String sql = "SELECT * \n"
+                + "FROM tbl_order";
+
+        try (Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+
+            // loop through the result set
+            while (rs.next()) {
+//                System.out.println(rs.getInt("id") +  "\t" + 
+//                                   rs.getString("nama") + "\t");
+                Order order = new Order();
+                order.setID(rs.getInt("id"));
+                order.setTanggal(rs.getString("tanggal"));
+                order.setInvoice(rs.getString("invoice"));
+                order.setJumlah_barang(rs.getInt("jumlah_barang"));
+                order.setTotal_harga_beli(rs.getInt("total_harga_beli"));
+                order.setTotal_harga_jual(rs.getInt("total_harga_jual"));
+                dataOrder.add(order);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return dataOrder;
+    }
 
 }
