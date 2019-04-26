@@ -5,6 +5,9 @@
  */
 package apotekku.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Adhyaksa57
@@ -16,6 +19,24 @@ public class Order {
     private int jumlah_barang;
     private int total_harga_beli;
     private int total_harga_jual;
+    private int total_bayar;
+    private List<OrderDetail> orderDetail = new ArrayList<>();
+
+    public List<OrderDetail> getOrderDetail() {
+        return orderDetail;
+    }
+
+    public void setOrderDetail(List<OrderDetail> orderDetail) {
+        this.orderDetail = orderDetail;
+    }
+
+    public int getTotal_bayar() {
+        return total_bayar;
+    }
+
+    public void setTotal_bayar(int total_bayar) {
+        this.total_bayar = total_bayar;
+    }
 
     public Order() {
     }
@@ -45,6 +66,10 @@ public class Order {
     }
 
     public int getJumlah_barang() {
+        System.out.println("orderDetail.size() : "+orderDetail.size());
+        if (orderDetail.size()>0) {
+            return orderDetail.size();
+        }
         return jumlah_barang;
     }
 

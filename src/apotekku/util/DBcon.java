@@ -8,13 +8,17 @@ package apotekku.util;
 import apotekku.model.Obat;
 import apotekku.model.ObatMasuk;
 import apotekku.model.Order;
+import apotekku.model.OrderDetail;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -101,6 +105,15 @@ public class DBcon {
             stmt.execute(sql_table_order);
             stmt.execute(sql_table_order_detail);
         } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        String sql_insert_trigger = "CREATE TRIGGER IF NOT EXISTS aft_insert_order_detail AFTER INSERT ON tbl_order_detail \n"
+                + "BEGIN \n"
+                + "UPDATE obat SET stock =  stock - NEW.jumlah WHERE id = NEW.id_obat; \n"
+                + "END \n";
+        try (Statement stmt = conn.createStatement()) {
+            stmt.execute(sql_insert_trigger);
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
@@ -421,7 +434,7 @@ public class DBcon {
         }
         return dataObat;
     }
-    
+
     public List<Order> getDataOrder() {
         List<Order> dataOrder = new ArrayList<Order>();
         String sql = "SELECT * \n"
@@ -441,12 +454,124 @@ public class DBcon {
                 order.setJumlah_barang(rs.getInt("jumlah_barang"));
                 order.setTotal_harga_beli(rs.getInt("total_harga_beli"));
                 order.setTotal_harga_jual(rs.getInt("total_harga_jual"));
+                order.setTotal_bayar(rs.getInt("total_bayar"));
                 dataOrder.add(order);
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return dataOrder;
+    }
+
+    public List<Order> getOrderDataCari(String parm) {
+        List<Order> dataOrder = new ArrayList<Order>();
+        String sql = "SELECT *"
+                + "FROM tbl_order \n"
+                + "WHERE LOWER(invoice) LIKE ? OR jumlah_barang = ? OR total_harga_jual = ? OR total_bayar = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);) {
+
+            pstmt.setString(1, "%" + parm + "%");
+            pstmt.setString(2, parm);
+            pstmt.setString(3, parm);
+            pstmt.setString(4, parm);
+            ResultSet rs = pstmt.executeQuery();
+
+            // loop through the result set
+            while (rs.next()) {
+//                System.out.println(rs.getInt("id") +  "\t" + 
+//                                   rs.getString("nama") + "\t");
+                Order order = new Order();
+                order.setID(rs.getInt("id"));
+                order.setTanggal(rs.getString("tanggal"));
+                order.setInvoice(rs.getString("invoice"));
+                order.setJumlah_barang(rs.getInt("jumlah_barang"));
+                order.setTotal_harga_beli(rs.getInt("total_harga_beli"));
+                order.setTotal_harga_jual(rs.getInt("total_harga_jual"));
+                order.setTotal_bayar(rs.getInt("total_bayar"));
+                dataOrder.add(order);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return dataOrder;
+    }
+
+    public Obat getObatByKodeAda(String kode) {
+        String sql = "SELECT * FROM obat WHERE kode = ? AND hapus = 0";
+        Boolean result = true;
+        Obat obat = new Obat();
+        obat.setID(0);
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // set the corresponding param
+            pstmt.setString(1, kode);
+
+            ResultSet rs = pstmt.executeQuery();
+            int row = 0;
+            while (rs.next()) {
+                obat.setID(rs.getInt("id"));
+                obat.setNama(rs.getString("nama"));
+                obat.setKode(rs.getString("kode"));
+                obat.setMin_stock(rs.getInt("min_stock"));
+                obat.setStock(rs.getInt("stock"));
+                obat.setHarga(rs.getInt("harga"));
+                obat.setSatuan(rs.getString("satuan"));
+
+            }
+            if (row > 0) {
+                result = false;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            result = false;
+        }
+        return obat;
+    }
+
+    public String insertOrderMasuk(Order order) {
+        String sql = "INSERT INTO tbl_order (invoice, tanggal, jumlah_barang, total_harga_jual, total_bayar) \n"
+                + "VALUES(?,CURRENT_TIMESTAMP,?,?,?)";
+        String sql_order_detail = "INSERT INTO tbl_order_detail (id_order, id_obat, harga_jual, jumlah, total) \n"
+                + "VALUES(?,?,?,?,?)";
+        String invoice = "";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                PreparedStatement stmt = conn.prepareStatement(sql_order_detail)) {
+            // set the corresponding param
+            DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+            Date date = new Date();
+//            System.out.println(dateFormat.format(date)); //2016/11/16 12:08:43
+
+            pstmt.setString(1, "INV" + dateFormat.format(date));
+            pstmt.setInt(2, order.getJumlah_barang());
+            pstmt.setInt(3, order.getTotal_harga_jual());
+            pstmt.setInt(4, order.getTotal_bayar());
+
+            pstmt.executeUpdate();
+            int id_order = 0;
+            ResultSet rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                id_order = rs.getInt(1);
+                invoice = rs.getString("invoice");
+            }
+            List<OrderDetail> orderDetail = new ArrayList<>();
+            orderDetail = order.getOrderDetail();
+            for (OrderDetail orderDetail1 : orderDetail) {
+                stmt.setInt(1, id_order);
+                stmt.setInt(2, orderDetail1.getID_OBAT());
+                stmt.setInt(3, orderDetail1.getHarga_jual());
+                stmt.setInt(4, orderDetail1.getJumlah());
+                stmt.setInt(5, orderDetail1.getTotal());
+                stmt.addBatch();
+            }
+
+            int[] hasil = stmt.executeBatch();
+
+            // execute the delete statement
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            invoice = "";
+        }
+        return invoice;
     }
 
 }

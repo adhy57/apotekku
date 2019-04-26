@@ -5,6 +5,7 @@
  */
 package apotekku.model;
 
+import apotekku.DataObatView;
 import apotekku.util.DBcon;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,16 +16,16 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author Adhyaksa57
  */
-public class OrderTableModel extends AbstractTableModel{
+public class StockObatTableModel extends AbstractTableModel{
     
     /*** Nama Kolom ***/
-    private final String HEADER[]={"Tanggal","No Invoice","Jumlah Barang","Total Harga","Total Bayar"};
-    List<Order> dataOrder=new ArrayList<Order>();
+    private final String HEADER[]={"No","Kode","Nama","Stock"};
+    List<Obat> dataObat=new ArrayList<Obat>();
     DBcon con = new DBcon();
     
     @Override
     public int getRowCount() {
-        return dataOrder.size();
+        return dataObat.size();
     }
 
     @Override
@@ -34,23 +35,22 @@ public class OrderTableModel extends AbstractTableModel{
 
     @Override
     public Object getValueAt(int i, int i1) {
-        Order order=dataOrder.get(i);
+        Obat obat=dataObat.get(i);
         
         switch(i1){
-            case 0: return order.getTanggal();
-            case 1: return order.getInvoice();
-            case 2: return order.getJumlah_barang();
-            case 3: return order.getTotal_harga_jual();
-            case 4: return order.getTotal_bayar();
+            case 0: return i+1;
+            case 2: return obat.getNama();
+            case 1: return obat.getKode();
+            case 3: return obat.getStock();
             default: return null;
         }
     }
  
       
     /*** Memasukkan data awal dari database ke tabel model
-     * @param order ***/
-    public OrderTableModel(List<Order> order){
-        this.dataOrder=order;
+     * @param obat ***/
+    public StockObatTableModel(List<Obat> obat){
+        this.dataObat=obat;
     }
     
     /*** Menambahkan sebuah data ke tabel model  ***/
@@ -64,23 +64,12 @@ public class OrderTableModel extends AbstractTableModel{
 //        mahasiswas.set(index, mahasiswa);
 //        fireTableRowsUpdated(index, index);
 //    }
-    
-    /*** Menghapus data pada tabel model
-     * @param index ***/
-    public void deleteObat(int index){
-//        if(con.deleteObatMasuk(dataOrder.get(index).getID(), dataOrder.get(index).getKode())){
-//            dataOrder.remove(index);
-//            fireTableRowsDeleted(index, index);
-//        }else{
-//            JOptionPane.showMessageDialog(null, "Data gagal di hapus","Peringatan",JOptionPane.INFORMATION_MESSAGE);
-//        }
-    }
-    
+   
     /*** Mendapatkan data pada tabel model
      * @param index
      * @return  ***/
-    public Order getOrder(int index){
-        return dataOrder.get(index);
+    public Obat getObat(int index){
+        return dataObat.get(index);
     }
     
     /*** Mendapatkan nama kolom
