@@ -9,22 +9,42 @@ import apotekku.model.Order;
 import apotekku.model.OrderDetail;
 import apotekku.model.OrderDetailTableModel;
 import apotekku.util.DBcon;
+import apotekku.util.DBobatKeluar;
 import apotekku.util.PrinterService;
+import apotekku.util.Setw;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -562,23 +582,33 @@ public class KasirView extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void bayar(Boolean print) {
-        int bayarL = Integer.parseInt(inputPembayaran.getText());
-        if ((bayarL - total) < 0) {
-            JOptionPane.showMessageDialog(dialogBayar, "Pembayaran kurang", "Peringatan", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            Order order = new Order();
-            order.setOrderDetail(dataOrder);
-            order.setTotal_harga_jual(tabelmodel.getTotalHarga());
-            order.setTotal_bayar(bayarL);
-            String invoice = con.insertOrderMasuk(order);
-            if (!invoice.isEmpty()) {
-                if (print == true) {
-                    print();
-                }
-                resetDta();
-                dialogBayar.setVisible(false);
-            }
+        String jmlByar = inputPembayaran.getText();
 
+        if (jmlByar.isEmpty()) {
+            JOptionPane.showMessageDialog(dialogBayar, "Jumlah Pembayaran tidak boleh kosong", "Peringatan", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            int bayarL = Integer.parseInt(jmlByar);
+
+            if ((bayarL - total) < 0) {
+                JOptionPane.showMessageDialog(dialogBayar, "Pembayaran kurang", "Peringatan", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                Order order = new Order();
+                order.setOrderDetail(dataOrder);
+                order.setTotal_harga_jual(tabelmodel.getTotalHarga());
+                order.setTotal_bayar(bayarL);
+                String invoice = con.insertOrderMasuk(order);
+                if (!invoice.isEmpty()) {
+                    dialogBayar.setVisible(false);
+                    if (print == true) {
+                        print(invoice, bayarL);
+                    }
+                    resetDta();   
+                    
+                    
+                    
+                }
+
+            }
         }
     }
     private void tableObatMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableObatMousePressed
@@ -642,7 +672,7 @@ public class KasirView extends javax.swing.JFrame {
     private void inputJumlahKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputJumlahKeyPressed
         // TODO add your handling code here:
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            System.out.println("Kosong : " + inputKode.getText().isEmpty());
+//            System.out.println("Kosong : " + inputKode.getText().isEmpty());
             if (inputJumlah.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(dialogBayar, "Input Jumlah tidak boleh kosong", "Peringatan", JOptionPane.INFORMATION_MESSAGE);
             } else {
@@ -670,6 +700,7 @@ public class KasirView extends javax.swing.JFrame {
                     inputJumlah.setText("1");
                     inputKode.requestFocus();
                     setTotal();
+                    dialogBayar.setVisible(true);
                 } else {
                     JOptionPane.showMessageDialog(dialogBayar, "Kode yang dimasukan salah", "Peringatan", JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -701,7 +732,10 @@ public class KasirView extends javax.swing.JFrame {
             txtKembalian.setText(setRupiah(total));
             txtPembayaran.setText(setRupiah(0));
             ketKembalian.setText("Kekurangan :");
+            jButton5.setEnabled(true);
+            jButton3.setEnabled(true);
             dialogBayar.setVisible(true);
+            jButton1.setEnabled(false);
         }
 
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -739,20 +773,20 @@ public class KasirView extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        PrinterService printerService = new PrinterService();
+//        PrinterService printerService = new PrinterService();
 
-        System.out.println(printerService.getPrinters());
-        if (printerName.isEmpty()) {
-            printerList.removeAllItems();
-            List<String> listPrint = printerService.getPrinters();
-            for (int i = 0; i < listPrint.size(); i++) {
-                printerList.addItem(listPrint.get(i));
-            }
-            dialogPrinter.setLocationRelativeTo(jPanel2);
-            dialogPrinter.setVisible(true);
-        } else {
-            bayar(true);
-        }
+//        System.out.println(printerService.getPrinters());
+//        if (printerName.isEmpty()) {
+//            printerList.removeAllItems();
+//            List<String> listPrint = printerService.getPrinters();
+//            for (int i = 0; i < listPrint.size(); i++) {
+//                printerList.addItem(listPrint.get(i));
+//            }
+//            dialogPrinter.setLocationRelativeTo(jPanel2);
+//            dialogPrinter.setVisible(true);
+//        } else {
+        bayar(true);
+//        }
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -761,16 +795,79 @@ public class KasirView extends javax.swing.JFrame {
         inputPembayaran.requestFocus();
     }//GEN-LAST:event_txtTotalBayarFocusGained
 
-    private void print() {
+    private void print(String invoice, int bayar) {
         //print some stuff
-        PrinterService printerService = new PrinterService();
-        printerService.printString(printerName,
-                "\n\n testing testing 1 2 3eeeee \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+//        PrinterService printerService = new PrinterService();
+//        String struck
+//                = "\n\n "
+//                + "INVOICE : " + invoice +"\n"
+//                + "===============================\n"
+//                + " Qty | Nama         | Total\n"
+//                + "===============================\n";
+//
+//        Setw f = new Setw();
+//        for (int i = 0; i < dataOrder.size(); i++) {
+//            OrderDetail order = dataOrder.get(i);
+//            struck += f.setwL(order.getJumlah() + "", 4) + " | "
+//                    + f.setwR(order.getNama(), 12) + " | "
+//                    + f.setwL(order.getHarga_jual()+ "", 8) + "\n";
+//        }
+//        struck += "===============================\n"
+//                + "TOTAL : "+f.setwL(tabelmodel.getTotalHarga()+"",22)+"\n"
+//                + "BAYAR : "+f.setwL(bayar+"",22)+"\n"
+//                + "KEMBALIAN : "+f.setwL(bayar+"",19)+"\n"
+//                +"\n\n\n\n";
+//        System.out.println(struck);
+//        printerService.printString(printerName, struck);
 
         // cut that paper!
-        byte[] cutP = new byte[]{0x1d, 'V', 1};
+//        byte[] cutP = new byte[]{0x1d, 'V', 1};
+//        printerService.printBytes("printerName", cutP);
+        try {
+//            Class.forName("com.mysql.jdbc.Driver").newInstance();
+//            Connection koneksi = DriverManager.getConnection("jdbc:mysql://localhost:3306/rumahbersalin", "root", "");
+//            HashMap parameter = new HashMap();
+            HashMap parameter = new HashMap<String, Object>();
+//            DBobatKeluar kwcon = new DBobatKeluar();
+            Con = con.getConnection();
+            Statement state = Con.createStatement();
 
-        printerService.printBytes("EPSON-TM-T20II", cutP);
+            Statement st = Con.createStatement();
+            ResultSet rs = st.executeQuery(
+                    "SELECT tbl_order.tanggal ,o_detail.id_obat, o_detail.id, o_detail.id_order, o_detail.harga_jual, o_detail.jumlah, o_detail.total,\n"
+                    + "       obat.kode, obat.nama\n"
+                    + "	FROM tbl_order_detail as o_detail\n"
+                    + "	LEFT JOIN tbl_order ON o_detail.id_order = tbl_order.id\n"
+                    + "	LEFT JOIN obat ON o_detail.id_obat= obat.id\n"
+                    + "	WHERE invoice = \"" + invoice + "\";");
+            parameter.put("invoice", ""+invoice);
+            parameter.put("bayar", "" + bayar);
+            parameter.put("tgl", "" + tanggal);
+            parameter.put("total", "" + tabelmodel.getTotalHarga());
+            parameter.put("change", "" + (tabelmodel.getTotalHarga() - tabelmodel.getTotalHarga()));
+            File file = new File("db/kwitansi.jrxml");
+
+            //            JasperDesign JasperDesign = JRXmlLoader.load(file);
+//            net.sf.jasperreports.engine.JasperReport JasperReport = JasperCompileManager.compileReport(JasperDesign);
+//            JasperPrint jp = JasperFillManager.fillReport(JasperReport, parameter);
+            InputStream reportStream = new FileInputStream(new File("db/kwitansi.jrxml"));
+            JasperDesign design = JRXmlLoader.load(reportStream);
+
+            JasperReport report = JasperCompileManager.compileReport(design);
+//            JasperPrint jp = JasperFillManager.fillReport(getClass().getResourceAsStream("db/kwitansi.jasper"), parameter);
+            JasperPrint jp = JasperFillManager.fillReport(report, parameter, Con);
+            JasperViewer.viewReport(jp, false);
+            state.close();
+            st.close();
+        } catch (JRException e) {
+
+            JOptionPane.showMessageDialog(dialogBayar, "Data tidak dapat dicetak!", "Cetak Data", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(KasirView.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(KasirView.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed

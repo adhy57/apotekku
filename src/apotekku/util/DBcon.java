@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -46,8 +47,13 @@ public class DBcon {
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Peringatan", JOptionPane.INFORMATION_MESSAGE);
             isConnect = false;
         }
+    }
+    
+    public Connection getConnection(){
+        return conn;
     }
 
     private void initDB() {
@@ -115,6 +121,7 @@ public class DBcon {
             stmt.execute(sql_insert_trigger);
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Peringatan", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -135,6 +142,7 @@ public class DBcon {
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Peringatan", JOptionPane.INFORMATION_MESSAGE);
         }
         return result;
     }
@@ -540,8 +548,8 @@ public class DBcon {
             DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
             Date date = new Date();
 //            System.out.println(dateFormat.format(date)); //2016/11/16 12:08:43
-
-            pstmt.setString(1, "INV" + dateFormat.format(date));
+            String temp = "INV" + dateFormat.format(date);
+            pstmt.setString(1, temp);
             pstmt.setInt(2, order.getJumlah_barang());
             pstmt.setInt(3, order.getTotal_harga_jual());
             pstmt.setInt(4, order.getTotal_bayar());
@@ -551,7 +559,7 @@ public class DBcon {
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
                 id_order = rs.getInt(1);
-                invoice = rs.getString("invoice");
+                invoice = temp;
             }
             List<OrderDetail> orderDetail = new ArrayList<>();
             orderDetail = order.getOrderDetail();
@@ -565,6 +573,10 @@ public class DBcon {
             }
 
             int[] hasil = stmt.executeBatch();
+            pstmt.close();
+            stmt.clearBatch();
+            stmt.closeOnCompletion();
+            stmt.close();
 
             // execute the delete statement
         } catch (SQLException e) {

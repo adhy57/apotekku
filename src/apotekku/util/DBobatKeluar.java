@@ -44,6 +44,10 @@ public class DBobatKeluar {
         }
     }
     
+    public Connection getConnection(){
+        return conn;
+    }
+    
     private void initDB() {
 //        try(Statement stmt = conn.createStatement()) {
 //            stmt.execute(sql_insert_trigger);
@@ -113,4 +117,5 @@ public class DBobatKeluar {
         }
         return dataObat;
     }
+    
 }

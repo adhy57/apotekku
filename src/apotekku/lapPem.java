@@ -22,11 +22,13 @@ import net.sf.jasperreports.view.JasperViewer;
  * @author user
  */
 public class lapPem extends javax.swing.JFrame {
-koneksi koneksi = new koneksi();
+
+    koneksi koneksi = new koneksi();
     Map<String, Object> param = new HashMap<String, Object>();
     net.sf.jasperreports.engine.JasperReport jasperReport;
     JasperDesign jasperDesign;
     JasperPrint jasperPrint;
+
     /**
      * Creates new form lapPem
      */
@@ -92,23 +94,23 @@ koneksi koneksi = new koneksi();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-dispose();        // TODO add your handling code here:
+        dispose();        // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         try {
-Class.forName("com.mysql.jdbc.Driver").newInstance();
-Connection koneksi = DriverManager.getConnection("jdbc:mysql://localhost:3306/rumahbersalin", "root", "");
-HashMap parameter=new HashMap();
-File file = new File("src/klinikkebidanan/reportpem.jrxml");
-JasperDesign JasperDesign = JRXmlLoader.load(file);
-net.sf.jasperreports.engine.JasperReport JasperReport = JasperCompileManager.compileReport(JasperDesign);
-JasperPrint jp = JasperFillManager.fillReport(JasperReport, parameter,koneksi );
-JasperViewer.viewReport(jp, false);
-} catch (Exception e) {
-	JOptionPane.showMessageDialog(null, "Data tidak dapat dicetak!","Cetak Data",JOptionPane.ERROR_MESSAGE);
-}     
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            Connection koneksi = DriverManager.getConnection("jdbc:mysql://localhost:3306/rumahbersalin", "root", "");
+            HashMap parameter = new HashMap();
+            File file = new File("src/klinikkebidanan/reportpem.jrxml");
+            JasperDesign JasperDesign = JRXmlLoader.load(file);
+            net.sf.jasperreports.engine.JasperReport JasperReport = JasperCompileManager.compileReport(JasperDesign);
+            JasperPrint jp = JasperFillManager.fillReport(JasperReport, parameter, koneksi);
+            JasperViewer.viewReport(jp, false);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Data tidak dapat dicetak!", "Cetak Data", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -159,6 +161,3 @@ JasperViewer.viewReport(jp, false);
     // End of variables declaration//GEN-END:variables
 
 }
-
-    
-
